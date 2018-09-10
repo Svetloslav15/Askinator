@@ -129,21 +129,30 @@ $(() => {
                     context.email = res.email;
                     remote.get("appdata", `messages?query={"receiver":"${auth.getCookie("id")}"}&sort={"_kmd.ect": -1}`, "kinvey")
                         .then(function (messages) {
-                            messages.forEach((el, index) => {
-                                el.rank = index + 1;
-                                el.date = calcTime(el._kmd.ect);
-                            });
-                            context.messages = messages;
-                            context.messagesCount = messages.length;
-                            context.loadPartials({
-                                navigation: "./templates/common/navigation.hbs",
-                                footer: "./templates/common/footer.hbs",
-                                profileSection: "./templates/myProfile/show-profile-section.hbs",
-                                listMessagesSection: "./templates/myProfile/list-messages-section.hbs",
-                                message: "./templates/myProfile/message.hbs"
-                            }).then(function () {
-                                this.partial('./templates/myProfilePage.hbs');
-                            })
+                            remote.get("appdata", "answers", "kinvey")
+                                .then(function (answers) {
+                                    messages.forEach((el, index) => {
+                                        el.rank = index + 1;
+                                        el.date = calcTime(el._kmd.ect);
+                                        let newAnswers = answers.filter(x => x.questionId === el._id);
+                                        el.answer = "";
+                                        if (newAnswers.length !== 0){
+                                            el.answer = newAnswers[newAnswers.length - 1].content;
+                                        }
+                                    });
+                                    context.messages = messages;
+                                    context.messagesCount = messages.length;
+                                    context.loadPartials({
+                                        navigation: "./templates/common/navigation.hbs",
+                                        footer: "./templates/common/footer.hbs",
+                                        profileSection: "./templates/myProfile/show-profile-section.hbs",
+                                        listMessagesSection: "./templates/myProfile/list-messages-section.hbs",
+                                        message: "./templates/myProfile/message.hbs"
+                                    }).then(function () {
+                                        this.partial('./templates/myProfilePage.hbs');
+                                    })
+                                }).catch(notify.handleError);
+
                         });
                 });
         });
@@ -184,20 +193,28 @@ $(() => {
                     context.id = res._id;
                     remote.get("appdata", `messages?query={"receiver":"${res._id}"}&sort={"_kmd.ect": -1}`, "kinvey")
                         .then(function (messages) {
-                            messages.forEach((el, index) => {
-                                el.rank = index + 1;
-                                el.date = calcTime(el._kmd.ect);
-                            });
-                            context.messagesCount = messages.length;
-                            context.messages = messages;
-                            context.loadPartials({
-                                navigation: "./templates/common/navigation.hbs",
-                                infoSection: "./templates/profileDetails/info-section.hbs",
-                                listMessages: "./templates/profileDetails/list-messages.hbs",
-                                message: "./templates/profileDetails/message.hbs"
-                            }).then(function () {
-                                this.partial("./templates/profileDetailsPage.hbs");
-                            })
+                            remote.get("appdata", "answers", "kinvey")
+                                .then(function (answers) {
+                                    messages.forEach((el, index) => {
+                                        el.rank = index + 1;
+                                        el.date = calcTime(el._kmd.ect);
+                                        let newAnswers = answers.filter(x => x.questionId === el._id);
+                                        el.answer = "";
+                                        if (newAnswers.length !== 0){
+                                            el.answer = newAnswers[newAnswers.length - 1].content;
+                                        }
+                                    });
+                                    context.messagesCount = messages.length;
+                                    context.messages = messages;
+                                    context.loadPartials({
+                                        navigation: "./templates/common/navigation.hbs",
+                                        infoSection: "./templates/profileDetails/info-section.hbs",
+                                        listMessages: "./templates/profileDetails/list-messages.hbs",
+                                        message: "./templates/profileDetails/message.hbs"
+                                    }).then(function () {
+                                        this.partial("./templates/profileDetailsPage.hbs");
+                                    }).catch(notify.handleError);
+                                })
                         })
                 }).catch(notify.handleError);
         });
@@ -216,41 +233,15 @@ $(() => {
                 })
         });
 
-        this.get("#/deleteQuestion/:id", function (context) {
-            swal({
-                title: "Delete message",
-                text: `Are you sure that you want to delete this message?`,
-                icon: "warning",
-                buttons: ["No", "Yes"],
-                dangerMode: true,
-            }).then((willDelete) => {
-                if (willDelete) {
-                    let id = context.params.id.slice(1);
-                    remote.remove("appdata", `messages/${id}`, "kinvey")
-                        .then(function () {
-                            notify.showInfo("Message deleted successfully!");
-                            context.redirect("#/myProfile");
-                        }).catch(notify.handleError);
-                }
-                else{
-                    context.redirect("#/myProfile");
-                }
-            });
-
-        });
-
         this.post('#/createAnswer/:id', function (context) {
             let questionId = context.params.id.slice(1);
-            let answer = context.params.answer;
-            remote.get("appdata", `messages/${questionId}`, "kinvey")
-                .then(function (res) {
-                    res.answer = answer;
-                    remote.update("appdata", `messages/${questionId}`, res, "kinvey")
-                        .then(function () {
-                            notify.showInfo("You answered a question!");
-                            context.redirect("#/myProfile");
-                        })
-                })
+            let content = context.params.answer;
+            let data = {questionId, content};
+            remote.post("appdata", "answers", data, "kinvey")
+                .then(function () {
+                    notify.showInfo("You answered a question!");
+                    context.redirect("#/myProfile");
+                }).catch(notify.handleError);
         });
 
     });
