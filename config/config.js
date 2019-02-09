@@ -5,6 +5,6 @@ module.exports = {
     },
     production: {
         port: process.env.PORT,
-        dbPath: ''
+        dbPath: 'mongodb://Anonymous:veryhardpass11@ds127624.mlab.com:27535/askinator'
     }
 };
