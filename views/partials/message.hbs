@@ -1,0 +1,12 @@
+<div class="bg-secondary p-3 ml-3 mr-3 mb-1 rounded border border-white">
+    <p>{{rank}}. {{content}} <span class="float-right">{{data}}</span></p>
+    <hr class="bg-white">
+    <div>{{answer}}</div>
+    <div>
+        <form method="post" action="/questions/answer/{{_id}}" class="p-3">
+            <input type="text" name="answer" placeholder="Answer" class="p-1">
+            <input type="submit" class="btn btn-outline-info ml-2" value="ANSWER">
+            <a href="/questions/delete/{{_id}}" class="btn btn-outline-danger ml-2">Delete</a>
+        </form>
+    </div>
+</div>

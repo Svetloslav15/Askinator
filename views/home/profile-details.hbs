@@ -1,0 +1,27 @@
+<section>
+    <section class="jumbotron ml-3 mr-3 text-center">
+        <img src="/images/profilePicture.png" alt="" class="mb-3" id="pictureUser">
+        <h2>{{user.username}}</h2>
+        <form method="post" action="/questions/ask/{{user._id}}" class="col">
+            <textarea name="content" id="questionTextarea" cols="30" rows="10"></textarea>
+            <div>
+                <button type="submit" class="btn btn-outline-dark p-2">ASK</button>
+            </div>
+        </form>
+    </section>
+    <section>
+        <div class="text-center">
+            <h2>{{user.username}} Messages</h2>
+            <p>All messages: {{messagesCount}}</p>
+        </div>
+        <section id="listAllMessages">
+            {{#if messages}}
+                {{#each messages}}
+                    {{> message-d}}
+                {{/each}}
+            {{else}}
+                <p class="text-center">No messages yet</p>
+            {{/if}}
+        </section>
+    </section>
+</section>

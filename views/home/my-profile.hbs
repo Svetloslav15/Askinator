@@ -1,0 +1,41 @@
+<section>
+    <section class="jumbotron ml-3 mr-3 text-center">
+        <h1 class="mb-2">My Profile</h1>
+        <div class="row">
+            <div class="col-lg-5">
+                <img src="/images/profilePicture.png" alt="" class="w-50 mb-3">
+            </div>
+            <div class="col-lg-6">
+                <div class="col">
+                    <label class="col-lg-12">
+                        <h4>First name: {{user.firstName}}</h4>
+                    </label>
+                    <label class="col-lg-12">
+                        <h4>Last name: {{user.lastName}}</h4>
+                    </label>
+                    <label class="col-lg-12">
+                        <h4>Username: {{user.username}}</h4>
+                    </label>
+                    <label class="col-lg-12">
+                        <h4>Email: {{user.email}}</h4>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="text-center">
+            <h2>My Messages</h2>
+            <p>All messages: {{messagesCount}}</p>
+        </div>
+        <section id="listAllMessages">
+            {{#if messages}}
+                {{#each messages}}
+                    {{> message}}
+                {{/each}}
+            {{else}}
+                <p class="text-center">No messages yet</p>
+            {{/if}}
+        </section>
+    </section>
+</section>
