@@ -2,7 +2,7 @@ const controllers = require('../controllers');
 const restrictedPages = require('./auth');
 
 module.exports = app => {
-    app.get('/', controllers.home.index);
+    app.get('/', restrictedPages.isAnonymous, controllers.home.index);
 
     app.get('/auth/register', restrictedPages.isAnonymous, controllers.auth.registerGet);
     app.post('/auth/register', restrictedPages.isAnonymous, controllers.auth.registerPost);

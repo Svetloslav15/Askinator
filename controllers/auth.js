@@ -31,7 +31,7 @@ module.exports = {
                     res.locals.globalError = err;
                     res.render('users/register', user);
                 } else {
-                    res.redirect('/');
+                    res.redirect('/my-profile');
                 }
             });
         } catch (e) {
@@ -62,7 +62,7 @@ module.exports = {
                 if (err) {
                     errorHandler(err);
                 } else {
-                    res.redirect('/');
+                    res.redirect('/my-profile');
                 }
             });
         } catch (e) {
