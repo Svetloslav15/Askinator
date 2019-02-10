@@ -25,7 +25,7 @@ module.exports = {
             let userId = user._id;
             Message.find({
                     receiver: userId
-                }).sort({date: 'descending'}).then((messages) => {
+                }).sort('-date').then((messages) => {
                     let messagesCount = messages.length;
                     messages.forEach((x, i) => {
                         x.rank = i + 1;
@@ -50,7 +50,8 @@ module.exports = {
             content,
             author,
             receiver:receiverId,
-            answers: []
+            answers: [],
+            date: new Date()
         }).then(() => {
             res.redirect(`/profile/${receiver.username}`);
         }).catch(console.error);
@@ -61,7 +62,7 @@ module.exports = {
             .then((user) => {
                 Message.find({
                     receiver: myId
-                }).sort({date: 'descending'})
+                }).sort('-date')
                     .then((messages) => {
                     let messagesCount = messages.length;
                     messages.forEach((x, i) => {
