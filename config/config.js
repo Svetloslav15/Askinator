@@ -1,6 +1,6 @@
 module.exports = {
     development: {
-        port: 3000,
+        port: 1000,
         dbPath: 'mongodb://localhost:27017/askinator'
     },
     production: {
