@@ -7,9 +7,8 @@ module.exports = {
     },
     registerPost: async (req, res) => {
         const reqUser = req.body;
-        let {username, email, password, repeatPassword, firstName, lastName} = reqUser;
-        if (username.trim() === "" || email.trim() === "" || firstName.trim() === "" ||
-            lastName.trim() === "" || password.trim() === "" || password.trim() !== repeatPassword.trim()){
+        let {username, password, repeatPassword} = reqUser;
+        if (username.trim() === "" || password.trim() === "" || password.trim() !== repeatPassword.trim()){
             res.locals.globalError = 'Fields are required!';
             res.render('users/register', user);
         }
@@ -19,11 +18,8 @@ module.exports = {
         try {
             const user = await User.create({
                 username: reqUser.username,
-                email: reqUser.email,
                 hashedPass,
                 salt,
-                firstName: reqUser.firstName,
-                lastName: reqUser.lastName,
                 roles: ['User']
             });
             req.logIn(user, (err, user) => {

@@ -11,13 +11,14 @@ module.exports = app => {
     app.post('/auth/logout', restrictedPages.isAuthed, controllers.auth.logout);
 
     app.get('/search-user', restrictedPages.isAuthed, controllers.home.searchUser);
-    app.get('/profile/:id', controllers.home.getUserById);
+    app.get('/profile/:username', controllers.home.getUserByUsername);
     app.get('/my-profile', restrictedPages.isAuthed, controllers.home.myProfileGet);
 
     app.post('/questions/ask/:userId', controllers.home.askQuestion);
     app.post('/questions/answer/:id', controllers.home.answerQuestion);
     app.get('/questions/delete/:id', controllers.home.deleteQuestion);
 
+    app.get('/search/filtered', restrictedPages.isAuthed, controllers.home.searchFilter);
 
     app.all('*', (req, res) => {
         res.status(404);

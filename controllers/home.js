@@ -17,11 +17,13 @@ module.exports = {
             res.render('/');
         });
     },
-    getUserById: (req, res) => {
-        let userId = req.params.id;
-        User.findById(userId)
-            .then(user => {
-                Message.find({
+    getUserByUsername: (req, res) => {
+        let username = req.params.username;
+        User.findOne({
+            username: username
+        }).then(user => {
+            let userId = user._id;
+            Message.find({
                     receiver: userId
                 }).sort({date: 'descending'}).then((messages) => {
                     let messagesCount = messages.length;
@@ -36,8 +38,9 @@ module.exports = {
             res.redirect('/');
         })
     },
-    askQuestion: (req, res) => {
-        let receiver = req.params.userId;
+    askQuestion: async (req, res) => {
+        let receiverId = req.params.userId
+        let receiver = await User.findById(receiverId);
         let content = req.body.content;
         let author = 'anonymous';
         if (req.isAuthenticated()) {
@@ -46,10 +49,10 @@ module.exports = {
         Message.create({
             content,
             author,
-            receiver,
+            receiver:receiverId,
             answers: []
         }).then(() => {
-            res.redirect(`/profile/${receiver}`);
+            res.redirect(`/profile/${receiver.username}`);
         }).catch(console.error);
     },
     myProfileGet: (req, res) => {
@@ -89,6 +92,22 @@ module.exports = {
             }
         }).then(() => {
             res.redirect(`/my-profile`);
+        });
+    },
+    searchFilter: (req, res) => {
+        let query = req.query.username;
+        User.find({})
+            .then(users => {
+                const filteredUsers = users.filter((a) => {
+                    return a.username.toLowerCase().includes(query.toLowerCase());
+                });
+                filteredUsers.forEach((x, i) => {
+                    x.rank = i + 1;
+                });
+                res.render('home/search', {users: filteredUsers, query});
+            }).catch((err) => {
+            console.log(err);
+            res.render('/');
         });
     }
 };
